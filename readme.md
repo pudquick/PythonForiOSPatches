@@ -1,4 +1,4 @@
-#iPythonPatches
+#iPythonPatches - Modules that can be loaded into iPython to enable missing functionality
 
 This repository is a collection of python scripts that function as module replacements for missing builtin modules which weren't included with the distribution of python named "iPython" in the App Store (for iPhone, iPod, and iPad).
 
