@@ -22,7 +22,7 @@ def boot2():
             if (not os.exists(ipython.modules)):
                 sys.path.append(ipython.modules + '')
     # Assuming that this script was downloaded with boostrap.txt, which grabs _scproxy.py, so urllib2 should work
-    import urllib2
+    import urllib2, os.path
     core_modules = (
         ("_scproxy.py", "http://pastebin.com/raw.php?i=HKnCFcKx"),
         ("_io.py",      "http://pastebin.com/raw.php?i=v9abP7Xt")
@@ -36,22 +36,24 @@ def boot2():
         f.write(data)
         f.close()
         print "Updated: %s (%s)" % (name,url)
-        if (os.exists(name+'c')):
+        if (os.path.exists(name+'c')):
             os.remove(name+'c')
             print ("* Removed %sc" % name)
     # Cleanup if this is the first time boot2 has been run after bootstrap.txt
     os.chdir(ipython.scripts)
-    if (os.exists('_scproxy.py')):
+    if (os.path.exists('_scproxy.py')):
         os.remove('_scproxy.py')
         print "* Removed additional _scproxy.py detected in User Scripts."
-    if (os.exists('_scproxy.pyc')):
+    if (os.path.exists('_scproxy.pyc')):
         os.remove('_scproxy.pyc')
         print "* Removed _scproxy.pyc detected in User Scripts."
     print "Done. Force quit and re-open, use: from _rp import *"
 
 ipython.boot2 = boot2
 
+import os.path
+
 if not (ipython.modules in sys.path):
-    if (not os.exists(ipython.modules)):
+    if (not os.path.exists(ipython.modules)):
         sys.path.append(ipython.modules + '')
 os.chdir(ipython.scripts)
