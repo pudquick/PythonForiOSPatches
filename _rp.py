@@ -1,3 +1,5 @@
+# Currently hosted at HTTP source: http://pastebin.com/raw.php?i=XyMWvV6g
+
 import os as os
 import sys as sys
 
