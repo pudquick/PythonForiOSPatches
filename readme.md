@@ -17,6 +17,7 @@ For best results, force quit the iPython app (press Home once to background it, 
 Once installed, usage is a simple single line command in iPython (when starting it):
 ###from _rp import *
 
+
 This will get you access to a new 'ipython' object which has the following attributes:
 
 - documents: Path to the iPython.app Documents folder on your device
@@ -25,6 +26,7 @@ This will get you access to a new 'ipython' object which has the following attri
 
 It also gains you a secondary command you can run:
 ###boot2()
+
 
 This command will create the 'modules' directory listed above, if it doesn't exist, move _scproxy.py into it (and out of the User Scripts folder), and additionally download the _io.py module (which allows 'io' to load, giving access to zipfile, gzip, etc.).
 
