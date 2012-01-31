@@ -15,8 +15,9 @@ This will download the initial _rp.py and _scproxy.py scripts into your User Scr
 For best results, force quit the iPython app (press Home once to background it, then double-press Home to show a list of recent applications, then press and hold on iPython to reveal a remove icon badge, then remove the iPython icon).
 
 Once installed, usage is a simple single line command in iPython (when starting it):
-###from _rp import *
 
+```python
+from _rp import *```
 
 This will get you access to a new 'ipython' object which has the following attributes:
 
@@ -25,8 +26,8 @@ This will get you access to a new 'ipython' object which has the following attri
 - modules: Path to a folder called 'modules' in the Documents folder
 
 It also gains you a secondary command you can run:
-###boot2()
-
+```python
+boot2()```
 
 This command will create the 'modules' directory listed above, if it doesn't exist, move _scproxy.py into it (and out of the User Scripts folder), and additionally download the _io.py module (which allows 'io' to load, giving access to zipfile, gzip, etc.).
 
