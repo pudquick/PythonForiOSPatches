@@ -1,3 +1,5 @@
+# Currently hosted at HTTP source: http://pastebin.com/raw.php?i=HKnCFcKx
+
 def _get_proxies():
     return {}
 
