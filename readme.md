@@ -2,6 +2,37 @@
 
 This repository is a collection of python scripts that function as module replacements for missing builtin modules which weren't included with the distribution of python named "iPython" in the App Store (for iPhone, iPod, and iPad).
 
+##How to use it with your iPython installation:
+
+- Visit this URL in Mobile Safari: https://raw.github.com/pudquick/iPythonPatches/master/bootstrap.txt
+- Copy the entire contents (should be able to click and hold to select everything)
+- Open up iPython
+- Paste the contents into the interpreter (may have to type one letter, then select it, then Paste)
+- Press enter
+
+This will download the initial _rp.py and _scproxy.py scripts into your User Scripts folder.
+
+For best results, force quit the iPython app (press Home once to background it, then double-press Home to show a list of recent applications, then press and hold on iPython to reveal a remove icon badge, then remove the iPython icon).
+
+Once installed, usage is a simple single line command in iPython (when starting it):
+
+###from _rp import *
+
+This will get you access to a new 'ipython' object which has the following attributes:
+
+- documents: Path to the iPython.app Documents folder on your device
+- scripts: Path to the 'User Scripts' folder in iPython
+- modules: Path to a folder called 'modules' in the Documents folder
+
+It also gains you a secondary command you can run:
+
+###boot2()
+
+This command will create the 'modules' directory listed above, if it doesn't exist, move _scproxy.py into it (and out of the User Scripts folder), and additionally download the _io.py module (which allows 'io' to load, giving access to zipfile, gzip, etc.).
+
+Again - for best results, after running boot2, force quit and relaunch iPython.
+
+
 ##Credits
 
 - The modules here are written by pudquick@github 
