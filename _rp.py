@@ -20,7 +20,7 @@ def boot2():
         os.mkdir('modules')
         # Add it to sys.path if not already there
         if not (ipython.modules in sys.path):
-            if (not os..path.exists(ipython.modules)):
+            if (not os.path.exists(ipython.modules)):
                 sys.path.append(ipython.modules + '')
     # Assuming that this script was downloaded with boostrap.txt, which grabs _scproxy.py, so urllib2 should work
     core_modules = (
