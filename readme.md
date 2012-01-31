@@ -27,6 +27,7 @@ This will get you access to a new 'ipython' object which has the following attri
 - modules: Path to a folder called 'modules' in the Documents folder
 
 It also gains you a secondary command you can run:
+
 ```python
 boot2()
 ```
