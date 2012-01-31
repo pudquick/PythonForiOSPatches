@@ -54,6 +54,6 @@ ipython.boot2 = boot2
 import os.path
 
 if not (ipython.modules in sys.path):
-    if (not os.path.exists(ipython.modules)):
+    if (os.path.exists(ipython.modules)):
         sys.path.append(ipython.modules + '')
 os.chdir(ipython.scripts)
