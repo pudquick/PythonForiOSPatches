@@ -1,3 +1,4 @@
+# Currently hosted at HTTP source: http://pastebin.com/raw.php?i=v9abP7Xt
 # Large portions of this script are adapted from _pyio.py, part of the standard python lib
 # Original source here: http://svn.python.org/projects/python/trunk/Lib/_pyio.py
 # However, _pyio itself imports io - which imports _io ...
