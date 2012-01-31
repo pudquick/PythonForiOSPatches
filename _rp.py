@@ -13,7 +13,7 @@ ipython = iPy()
 
 def boot2():
     # This will boostrap additional changes
-    if (not (os.exists(ipython.modules)):
+    if (not os.exists(ipython.modules)):
         # Make modules path if it doesn't exist
         os.chdir(ipython.documents)
         os.mkdir('modules')
