@@ -11,6 +11,9 @@ class iPy:
 
 ipython = iPy()
 
+if (not sys.__dict__.has_key('argv')):
+    sys.modules['sys'].argv = [''+''][:]
+
 def boot2():
     import os.path, urllib2
     # This will boostrap additional changes
