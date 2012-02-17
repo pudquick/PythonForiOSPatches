@@ -1,40 +1,23 @@
-#iPythonPatches - Modules that can be loaded into iPython to enable missing functionality
+#PythonForiOSPatches - Modules that can be loaded into "Python for iOS" (available in the iOS App Store) to enable missing functionality
 
 This repository is a collection of python scripts that function as module replacements for missing builtin modules which weren't included with the distribution of python named "iPython" in the App Store (for iPhone, iPod, and iPad).
 
-##How to use it with your iPython installation:
+Thank you, Jonathan Hosmer, for bringing python to my iPhone! You are the one reason I'm not jailbreaking my device.
 
-- Visit this URL in Mobile Safari: https://raw.github.com/pudquick/iPythonPatches/master/bootstrap.txt
-- Copy the entire contents (should be able to click and hold to select everything)
-- Open up iPython
-- Paste the contents into the interpreter (may have to type one letter, then select it, then Paste)
-- Press enter
+##How to use it:
 
-This will download the initial _rp.py and _scproxy.py scripts into your User Scripts folder.
+- This section of the documentation will be updated to reflect usage of any new scripts I add. The original documentation here was for version 1.1 and has been archived in the folder containing the 1.1 code.
 
-For best results, force quit the iPython app (press Home once to background it, then double-press Home to show a list of recent applications, then press and hold on iPython to reveal a remove icon badge, then remove the iPython icon).
-
-Once installed, usage is a simple single line command in iPython (when starting it):
-
+However, there is one thing currently available in 1.2 which was part of my 1.1 scripts which is currently not documented in Python for iOS:
 ```python
-from _rp import *
+from _rp import pythonforios
 ```
 
-This will get you access to a new 'ipython' object which has the following attributes:
+This will get you access to a new 'pythonforios' object which has the following attributes:
 
-- documents: Path to the iPython.app Documents folder on your device
-- scripts: Path to the 'User Scripts' folder in iPython
+- documents: Path to the app's Documents folder on your device
+- scripts: Path to the 'User Scripts' folder
 - modules: Path to a folder called 'modules' in the Documents folder
-
-It also gains you a secondary command you can run:
-
-```python
-boot2()
-```
-
-This command will create the 'modules' directory listed above, if it doesn't exist, move _scproxy.py into it (and out of the User Scripts folder), and additionally download the _io.py module (which allows 'io' to load, giving access to zipfile, gzip, etc.).
-
-Again - for best results, after running boot2, force quit and relaunch iPython.
 
 
 ##Credits
