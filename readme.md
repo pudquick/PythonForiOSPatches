@@ -4,6 +4,8 @@ This repository is a collection of python scripts that function as module replac
 
 Thank you, Jonathan Hosmer, for bringing python to my iPhone! You are the one reason I'm not jailbreaking my device.
 
+I'm happy I could play some small part in making it work even better in iOS :)
+
 ##How to use it:
 
 - This section of the documentation will be updated to reflect usage of any new scripts I add. The original documentation here was for version 1.1 and has been archived in the folder containing the 1.1 code.
