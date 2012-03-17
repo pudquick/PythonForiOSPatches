@@ -461,7 +461,10 @@ class _Shpy:
                     fp.close()
         finally:
             tar.close()
-    
+
+    def f_selfupdate(self, argv):
+        self.f_get(['get', 'https://raw.github.com/pudquick/PythonForiOSPatches/master/shpy/shpy.py'])
+
     def f_error(self, argv):
         if (argv[:1]):
             print "! Unknown cmd: %s - try: help" % argv[0]
@@ -491,7 +494,8 @@ class _Shpy:
                                "wget":   self.f_get,
                                "mkdir":  self.f_mkdir,
                                "untar":  self.f_untar,
-                               "unzip":  self.f_unzip}
+                               "unzip":  self.f_unzip,
+                               "selfupdate":  self.f_selfupdate}
         self.hmsg = "Available commands:\n"                    + \
                     "-------------------\n"                    + \
                     "help - Shows help (also: h, ?)\n"         + \
@@ -506,7 +510,8 @@ class _Shpy:
                     "rm file [..] - Delete files and dirs\n"   + \
                     "mv src [..] dest - Move file(s)\n"        + \
                     "cp src [..] dest - Copy file(s)\n"        + \
-                    "get URL [file] - Download file"
+                    "get URL [file] - Download file\n"         + \
+                    "selfupdate - Update shpy"
         self.bp = BashParser()
 
     def parse_cmd(self, argv):
