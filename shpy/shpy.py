@@ -521,6 +521,8 @@ class _Shpy:
         self.bp = BashParser()
         try:
             dir = [x for x in sys.path if ('Python for iOS.app' in x)][0].split('Python for iOS.app')[0]
+            if (dir.startswith('/var')):
+                dir = '/private' + dir
         except:
             dir = '/'
         documents = dir + 'Documents'
