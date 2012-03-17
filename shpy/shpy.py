@@ -540,7 +540,10 @@ class _Shpy:
         base = self.bp.env_vars['$HOME'].rstrip('/')
         if ((base == '') or (not path_string.startswith(base))):
             return path_string
-        return '~/' + path_string[len(base):]
+        fixed = path_string[len(base):]
+        if (fixed):
+            return '~' + fixed
+        return '~/'
 
     def parse_cmd(self, argv):
         cmd = (argv[:1] or [None])[0]
