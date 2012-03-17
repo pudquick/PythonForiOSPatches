@@ -465,6 +465,10 @@ class _Shpy:
     def f_selfupdate(self, argv):
         self.f_get(['get', 'https://raw.github.com/pudquick/PythonForiOSPatches/master/shpy/shpy.py'])
 
+    def f_vars(self, argv):
+        for k in sorted(self.bp.env_vars.keys()):
+            print "%s: %s" % (k, self.bp.env_vars[k])
+
     def f_error(self, argv):
         if (argv[:1]):
             print "! Unknown cmd: %s - try: help" % argv[0]
@@ -495,6 +499,7 @@ class _Shpy:
                                "mkdir":  self.f_mkdir,
                                "untar":  self.f_untar,
                                "unzip":  self.f_unzip,
+                               "vars":   self.f_vars,
                                "selfupdate":  self.f_selfupdate}
         self.hmsg = "Available commands:\n"                    + \
                     "-------------------\n"                    + \
@@ -511,8 +516,23 @@ class _Shpy:
                     "mv src [..] dest - Move file(s)\n"        + \
                     "cp src [..] dest - Copy file(s)\n"        + \
                     "get URL [file] - Download file\n"         + \
-                    "selfupdate - Update shpy"
+                    "selfupdate - Update shpy\n"               + \
+                    "vars - List variables and values"
         self.bp = BashParser()
+        try:
+            dir = [x for x in sys.path if ('Python for iOS.app' in x)][0].split('Python for iOS.app')[0]
+        except:
+            dir = '/'
+        documents = dir + 'Documents'
+        modules = documents + '/Modules'
+        scripts = documents + '/User Scripts'
+        if (os.getcwd() == '/'):
+            # Chances are we're being run without _rp
+            os.chdir(scripts)
+        env_vars = {'$HOME': documents,
+                    '$SCRIPTS': scripts,
+                    '$MODULES': modules}
+        self.bp.env_vars = env_vars
 
     def parse_cmd(self, argv):
         cmd = (argv[:1] or [None])[0]
