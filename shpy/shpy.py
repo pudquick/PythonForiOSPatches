@@ -1,4 +1,4 @@
-import sys, os, os.path, zipfile, tarfile, shutil, urllib2
+import sys, os, os.path, zipfile, tarfile, shutil, urllib2, xmlrpclib
 
 class _Shpy:
     def split_leading_dir(self, path):
@@ -358,6 +358,34 @@ class _Shpy:
         print "*** Exiting shpy ***"
         return 1
 
+    def f_pypi_search(self, argv):
+        if (not (len(argv) >= 2)):
+            print "* Usage: pypi-search <package name>"
+            return 0
+        pkg_name = ' '.join(argv[1:])
+        pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
+        hits = pypi.search({'name': pkg_name}, 'and')
+        if (not hits):
+            print "* PyPI: No matches found."
+            return 0
+        print "* Found %s match%s:" % (len(hits), ((len(hits) > 1) and 'es') or '')
+        for p in sorted(hits, key=lambda pkg: pkg['_pypi_ordering'], reverse=True):
+            print "  %s:" % (p['name'])
+            print '   "%s"' % (p['summary'])
+
+    def f_pypi_vers(self, argv):
+        if (not (len(argv) >= 2)):
+            print "* Usage: pypi-search <package name>"
+            return 0
+        pkg_name = ' '.join(argv[1:])
+        pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
+        hits = pypi.package_releases(pkg_name, True)
+        if (not hits):
+            print "* PyPI: None available for:", pkg_name
+            return 0
+        print "* Available version%s:" % (((len(hits) > 1) and 's') or '')
+        print ', '.join(hits)
+
     def f_unzip(self, argv):
         # filename, location
         if (not (2 <= len(argv) <= 3)):
@@ -500,6 +528,8 @@ class _Shpy:
                                "untar":  self.f_untar,
                                "unzip":  self.f_unzip,
                                "vars":   self.f_vars,
+                               "pypi-search": self.f_pypi_search,
+                               "pypi-vers":   self.f_pypi_vers,
                                "selfupdate":  self.f_selfupdate}
         self.hmsg = "Available commands:\n"                    + \
                     "-------------------\n"                    + \
