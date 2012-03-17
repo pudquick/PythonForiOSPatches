@@ -47,7 +47,7 @@ class _Shpy:
             file_name = os.path.basename(full_file)
             dir_name  = os.path.dirname(full_file).rstrip('/')
             if (not os.path.exists(full_file)):
-                print "! Error: Skipped, missing -", file
+                print "! Error: Skipped, missing -", self.pretty_path(file)
                 continue
             if (os.path.isdir(full_file)):
                 # Need to add this as a key and all the files contained inside it
@@ -70,9 +70,9 @@ class _Shpy:
             in_cwd = True
         for i,path in enumerate(paths):
             if (i > 0):
-                print "\n" + path + "/:"
+                print "\n" + self.pretty_path(path) + "/:"
             elif (not in_cwd):
-                print path + "/:"
+                print self.pretty_path(path) + "/:"
             for file in sorted(list(files_for_path[path])):
                 full_file = os.path.abspath(file).rstrip('/')
                 file_name = os.path.basename(full_file)
@@ -84,12 +84,12 @@ class _Shpy:
     def f_cd(self, argv):
         target = (argv[1:2] or ['/'])[0]
         try:
-            print "* Changing path to:", target
+            print "* Changing path to:", self.pretty_path(target)
             os.chdir(target)
-            print "* Path is now:", os.getcwd()
+            print "* Path is now:", self.pretty_path(os.getcwd())
         except:
             print "! Error:", sys.exc_info()[1]
-            print "* Path is now:", os.getcwd()
+            print "* Path is now:", self.pretty_path(os.getcwd())
 
     def f_mkdir(self, argv):
         if (len(argv) != 2):
@@ -97,12 +97,12 @@ class _Shpy:
             return 0
         target = argv[1]
         if os.path.exists(target):
-            print "! Error: Exists -", os.path.abspath(target)
+            print "! Error: Exists -", self.pretty_path(os.path.abspath(target))
             return 0
         try:
-            print "* Creating dir:", target
+            print "* Creating dir:", self.pretty_path(target)
             os.mkdir(target)
-            print "* Made at:", os.path.abspath(target)
+            print "* Made at:", self.pretty_path(os.path.abspath(target))
         except:
             print "! Error:", sys.exc_info()[1]
 
@@ -112,7 +112,7 @@ class _Shpy:
             return 0
         target = argv[1]
         if (not os.path.exists(target)):
-            print "! Error: Not found -", os.path.abspath(target)
+            print "! Error: Not found -", self.pretty_path(os.path.abspath(target))
             return 0
         if (os.path.isdir(target)):
             print "! Error: Target is a directory."
@@ -133,7 +133,7 @@ class _Shpy:
         for file in argv[1:]:
             full_file = os.path.abspath(file).rstrip('/')
             if not os.path.exists(file):
-                print "! Error: Not found -", file
+                print "! Error: Not found -", self.pretty_path(file)
                 continue
             if (full_file.lower() == os.getcwd().rstrip('/').lower()):
                 print "! Error: Skipped rm of current dir (.)"
@@ -142,15 +142,15 @@ class _Shpy:
                 try:
                     shutil.rmtree(full_file, True)
                     if (os.path.exists(full_file)):
-                        print "! Error: Could not rm -", file
+                        print "! Error: Could not rm -", self.pretty_path(file)
                     else:
-                        print "* rm'd:", full_file
+                        print "* rm'd:", self.pretty_path(full_file)
                 except:
                     print "! Error:", sys.exc_info()[1]                
             else:
                 try:
                     os.remove(full_file)
-                    print "* rm'd:", full_file
+                    print "* rm'd:", self.pretty_path(full_file)
                 except:
                     print "! Error:", sys.exc_info()[1]
 
@@ -163,7 +163,7 @@ class _Shpy:
         if (len(files) > 1):
             # Copying multiple files, destination must be an existing directory.
             if (not os.path.isdir(dest)):
-                print "! Error: No such dir -", os.path.abspath(dest)
+                print "! Error: No such dir -", self.pretty_path(os.path.abspath(dest))
                 return 0
             full_dest = os.path.abspath(dest).rstrip('/') + '/'
             did_copy = False
@@ -172,7 +172,7 @@ class _Shpy:
                 file_name = os.path.basename(full_file)
                 new_name  = full_dest + file_name
                 if (not os.path.exists(full_file)):
-                    print "! Error: Skipped, missing -", file
+                    print "! Error: Skipped, missing -", self.pretty_path(file)
                     continue
                 if (full_file.lower() == os.getcwd().rstrip('/').lower()):
                     print "! Error: Skipped cp of current dir (.)"
@@ -182,12 +182,12 @@ class _Shpy:
                         shutil.copytree(full_file,new_name)
                     else:
                         shutil.copy(full_file,new_name)
-                    print "* cp'd:", full_file
+                    print "* cp'd:", self.pretty_path(full_file)
                     did_copy = True
                 except:
                     "! Error:", sys.exc_info()[1]
             if (did_copy):
-                print "* ..to:", full_dest
+                print "* ..to:", self.pretty_path(full_dest)
         else:
             # Copying a single file to a (pre-existing) directory or a file
             file = files[0]
@@ -198,23 +198,23 @@ class _Shpy:
                 if (os.path.exists(full_file)):
                     try:
                         shutil.copytree(full_file,full_dest + '/' + file_name)
-                        print "* cp'd:", full_file
-                        print "* ..to:", full_dest + '/' + file_name
+                        print "* cp'd:", self.pretty_path(full_file)
+                        print "* ..to:", self.pretty_path(full_dest + '/' + file_name)
                     except:
                         print "! Error:", sys.exc_info()[1]
                 else:
-                    print "! Error: No such file -", file
+                    print "! Error: No such file -", self.pretty_path(file)
                     return 0
             else:
                 if (os.path.exists(full_file)):
                     try:
                         shutil.copy(full_file,full_dest)
-                        print "* cp'd:", full_file
-                        print "* ..to:", full_dest
+                        print "* cp'd:", self.pretty_path(full_file)
+                        print "* ..to:", self.pretty_path(full_dest)
                     except:
                         print "! Error:", sys.exc_info()[1]
                 else:
-                    print "! Error: No such file -", file
+                    print "! Error: No such file -", self.pretty_path(file)
                     return 0
 
     def f_mv(self, argv):
@@ -226,7 +226,7 @@ class _Shpy:
         if (len(files) > 1):
             # Moving multiple files, destination must be an existing directory.
             if (not os.path.isdir(dest)):
-                print "! Error: No such dir -", os.path.abspath(dest)
+                print "! Error: No such dir -", self.pretty_path(os.path.abspath(dest))
                 return 0
             full_dest = os.path.abspath(dest).rstrip('/') + '/'
             did_move = False
@@ -235,19 +235,19 @@ class _Shpy:
                 file_name = os.path.basename(full_file)
                 new_name  = full_dest + file_name
                 if (not os.path.exists(full_file)):
-                    print "! Error: Skipped, missing -", file
+                    print "! Error: Skipped, missing -", self.pretty_path(file)
                     continue
                 if (full_file.lower() == os.getcwd().rstrip('/').lower()):
                     print "! Error: Skipped mv of current dir (.)"
                     continue
                 try:
                     os.rename(full_file,new_name)
-                    print "* mv'd:", full_file
+                    print "* mv'd:", self.pretty_path(full_file)
                     did_move = True
                 except:
                     "! Error:", sys.exc_info()[1]
             if (did_move):
-                print "* ..to:", full_dest
+                print "* ..to:", self.pretty_path(full_dest)
         else:
             # Moving a single file to a (pre-existing) directory or a file
             file = files[0]
@@ -258,27 +258,27 @@ class _Shpy:
                 if (os.path.exists(full_file)):
                     try:
                         os.rename(full_file, full_dest + '/' + file_name)
-                        print "* mv'd:", full_file
-                        print "* ..to:", full_dest + '/' + file_name
+                        print "* mv'd:", self.pretty_path(full_file)
+                        print "* ..to:", self.pretty_path(full_dest + '/' + file_name)
                     except:
                         print "! Error:", sys.exc_info()[1]
                 else:
-                    print "! Error: No such file -", file
+                    print "! Error: No such file -", self.pretty_path(file)
                     return 0
             else:
                 if (os.path.exists(full_file)):
                     try:
                         os.rename(full_file, full_dest)
-                        print "* mv'd:", full_file
-                        print "* ..to:", full_dest
+                        print "* mv'd:", self.pretty_path(full_file)
+                        print "* ..to:", self.pretty_path(full_dest)
                     except:
                         print "! Error:", sys.exc_info()[1]
                 else:
-                    print "! Error: No such file -", file
+                    print "! Error: No such file -", self.pretty_path(file)
                     return 0
 
     def f_pwd(self, argv):
-            print os.getcwd()
+            print self.pretty_path(os.getcwd())
 
     def chunk_report(self, bytes_so_far, chunk_size, total_size):
         if (total_size != None):
@@ -348,7 +348,7 @@ class _Shpy:
                 for x in data:
                     f.write(x)
                 f.close()
-                print "* Saved to:", filename
+                print "* Saved to:", self.pretty_path(filename)
             except:
                 print "! Error:", sys.exc_info()[1]
         else:
@@ -365,18 +365,18 @@ class _Shpy:
             return 0
         filename = os.path.abspath(argv[1])
         if (not filename.lower().endswith('.zip')):
-            print "! Error: Needs a .zip name -", argv[1]
+            print "! Error: Needs a .zip name -", self.pretty_path(argv[1])
             return 0
         location = (argv[2:3] or [os.path.dirname(filename) + "/" + os.path.splitext(os.path.basename(filename))[0]])[0]
         if not os.path.exists(filename):
-            print "! Error: No such file -", argv[1]
+            print "! Error: No such file -", self.pretty_path(argv[1])
             return 0
         if not os.path.exists(location):
             os.makedirs(location)
         zipfp = open(filename, 'rb')
         try:
-            print "* Unzipping:", filename
-            print "* To path:",  os.path.abspath(location)
+            print "* Unzipping:", self.pretty_path(filename)
+            print "* To path:",  self.pretty_path(os.path.abspath(location))
             zip = zipfile.ZipFile(zipfp)
             leading = self.has_leading_dir(zip.namelist())
             for name in zip.namelist():
@@ -412,7 +412,7 @@ class _Shpy:
             return 0
         filename = os.path.abspath(argv[1])
         if (not (filename.lower().endswith('.tar') or filename.lower().endswith('.tgz') or filename.lower().endswith('.tar.gz'))):
-            print "! Error: Needs a .tar/.tar.gz/.tgz name -", argv[1]
+            print "! Error: Needs a .tar/.tar.gz/.tgz name -", self.pretty_path(argv[1])
             return 0
         elif filename.lower().endswith('.tar.gz'):
             base_filename = os.path.basename(filename)[:-7]
@@ -428,8 +428,8 @@ class _Shpy:
         tar = tarfile.open(filename, mode)
         try:
             leading = self.has_leading_dir([member.name for member in tar.getmembers() if member.name != 'pax_global_header'])
-            print "* Untarring:", filename
-            print "* To path:",  os.path.abspath(location)
+            print "* Untarring:", self.pretty_path(filename)
+            print "* To path:",  self.pretty_path(os.path.abspath(location))
             for member in tar.getmembers():
                 fn = member.name
                 if fn == 'pax_global_header':
@@ -533,6 +533,12 @@ class _Shpy:
                     '$SCRIPTS': scripts,
                     '$MODULES': modules}
         self.bp.env_vars = env_vars
+
+    def pretty_path(self, path_string):
+        base = self.bp.env_vars['$HOME'].rstrip('/')
+        if ((base == '') or (not path_string.startswith(base))):
+            return path_string
+        return '~/' + path_string[len(base):]
 
     def parse_cmd(self, argv):
         cmd = (argv[:1] or [None])[0]
