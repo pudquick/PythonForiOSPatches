@@ -458,7 +458,7 @@ class _Shpy:
         # Temporary workaround for ongoing bug in Python for iOS
         sys.stdout.write(prompt)
         sys.stdout.flush()
-        return raw_input('').rstrip('\r\n')
+        return raw_input().rstrip('\r\n')
 
     def main_loop(self):
         while True:
