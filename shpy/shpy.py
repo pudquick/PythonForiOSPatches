@@ -454,9 +454,15 @@ class _Shpy:
         cmd = (argv[:1] or [None])[0]
         return (self.available_cmds.get(cmd, self.f_error))(argv)
 
+    def fixed_raw_input(self, prompt):
+        # Temporary workaround for ongoing bug in Python for iOS
+        sys.stdout.write(prompt)
+        sys.stdout.flush()
+        return raw_input('').rstrip('\r\n')
+
     def main_loop(self):
         while True:
-            command_str = raw_input('$> ').rstrip('\r\n')
+            command_str = self.fixed_raw_input('$> ')
             try:
                 command_list = self.bp.bash_parse(command_str)
                 if (command_list):
