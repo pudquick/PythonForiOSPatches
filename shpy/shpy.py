@@ -1,4 +1,4 @@
-import sys, os, os.path, zipfile, shutil, urllib2
+import sys, os, os.path, zipfile, tarfile, shutil, urllib2
 
 class _Shpy:
     def split_leading_dir(self, path):
@@ -404,6 +404,63 @@ class _Shpy:
             return 0
         finally:
             zipfp.close()
+
+    def f_untar(self, argv):
+        # filename, location
+        if (not (2 <= len(argv) <= 3)):
+            print "* Usage: untar file.tar [destdir]"
+            return 0
+        filename = os.path.abspath(argv[1])
+        if (not (filename.lower().endswith('.tar') or filename.lower().endswith('.tgz') or filename.lower().endswith('.tar.gz'))):
+            print "! Error: Needs a .tar/.tar.gz/.tgz name -", argv[1]
+            return 0
+        elif filename.lower().endswith('.tar.gz'):
+            base_filename = os.path.basename(filename)[:-7]
+        else:
+            base_filename = os.path.splitext(os.path.basename(filename))[0]
+        location = (argv[2:3] or [os.path.dirname(filename) + "/" + base_filename])[0]
+        if not os.path.exists(location):
+            os.makedirs(location)
+        if filename.lower().endswith('.gz') or filename.lower().endswith('.tgz'):
+            mode = 'r:gz'
+        else:
+            mode = 'r'
+        tar = tarfile.open(filename, mode)
+        try:
+            leading = self.has_leading_dir([member.name for member in tar.getmembers() if member.name != 'pax_global_header'])
+            print "* Untarring:", filename
+            print "* To path:",  os.path.abspath(location)
+            for member in tar.getmembers():
+                fn = member.name
+                if fn == 'pax_global_header':
+                    continue
+                if leading:
+                    fn = self.split_leading_dir(fn)[1]
+                path = os.path.join(location, fn)
+                if member.isdir():
+                    if not os.path.exists(path):
+                        os.makedirs(path)
+                elif member.issym():
+                    # skip symlinks
+                    print "! Skipped symlink -", member.name
+                    continue
+                else:
+                    try:
+                        fp = tar.extractfile(member)
+                    except (KeyError, AttributeError):
+                        e = sys.exc_info()[1]
+                        print "! Error: Invalid -", member.name, ":", e
+                        continue
+                    if not os.path.exists(os.path.dirname(path)):
+                        os.makedirs(os.path.dirname(path))
+                    destfp = open(path, 'wb')
+                    try:
+                        shutil.copyfileobj(fp, destfp)
+                    finally:
+                        destfp.close()
+                    fp.close()
+        finally:
+            tar.close()
     
     def f_error(self, argv):
         if (argv[:1]):
@@ -433,6 +490,7 @@ class _Shpy:
                                "curl":   self.f_get,
                                "wget":   self.f_get,
                                "mkdir":  self.f_mkdir,
+                               "untar":  self.f_untar,
                                "unzip":  self.f_unzip}
         self.hmsg = "Available commands:\n"                    + \
                     "-------------------\n"                    + \
@@ -444,6 +502,7 @@ class _Shpy:
                     "mkdir dir - Create directory\n"           + \
                     "cat file - Print file to screen\n"        + \
                     "unzip file.zip [destdir] - Unzip file\n"  + \
+                    "untar file.tar [destdir] - Untar file\n"  + \
                     "rm file [..] - Delete files and dirs\n"   + \
                     "mv src [..] dest - Move file(s)\n"        + \
                     "cp src [..] dest - Copy file(s)\n"        + \
