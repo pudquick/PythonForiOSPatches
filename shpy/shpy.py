@@ -358,9 +358,16 @@ class _Shpy:
         print "*** Exiting shpy ***"
         return 1
 
+    def f_pypi(self, argv):
+        print "pypi commands:\n"                              + \
+              "--------------\n"                              + \
+              "pypi-search name - Package name search\n"      + \
+              "pypi-vers [-f|-v] name - Top/all/visible vers"
+        return 0
+
     def f_pypi_search(self, argv):
         if (not (len(argv) >= 2)):
-            print "* Usage: pypi-search <package name>"
+            print "* Usage: pypi-search name"
             return 0
         pkg_name = ' '.join(argv[1:])
         pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
@@ -375,15 +382,32 @@ class _Shpy:
 
     def f_pypi_vers(self, argv):
         if (not (len(argv) >= 2)):
-            print "* Usage: pypi-search <package name>"
+            print "* Usage: pypi-vers [-f|-v] name"
             return 0
+        no_limit,show_hidden = False, True
+        if ((len(argv) > 2) and (argv[1] in ["-f","-v"])):
+            if (argv[1] == '-f'):
+                no_limit = True
+            elif (argv[1] == '-v'):
+                show_hidden = False
+            argv = argv[1:]
         pkg_name = ' '.join(argv[1:])
         pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
-        hits = pypi.package_releases(pkg_name, True)
+        hits = pypi.package_releases(pkg_name, show_hidden)
         if (not hits):
             print "* PyPI: None available for:", pkg_name
             return 0
-        print "* Available version%s:" % (((len(hits) > 1) and 's') or '')
+        if ((not no_limit) and (len(hits) > 10)):
+            hits = hits[:10]
+        elif (not no_limit):
+            no_limit = True
+        if (not no_limit):
+            leader = "Top 10"
+        elif (not show_hidden):
+            leader = "Visible"
+        else:
+            leader = "Available"
+        print "* %s version%s:" % (leader, (((len(hits) > 1) and 's') or ''))
         print ', '.join(hits)
 
     def f_unzip(self, argv):
@@ -528,6 +552,7 @@ class _Shpy:
                                "untar":  self.f_untar,
                                "unzip":  self.f_unzip,
                                "vars":   self.f_vars,
+                               "pypi":   self.f_pypi,
                                "pypi-search": self.f_pypi_search,
                                "pypi-vers":   self.f_pypi_vers,
                                "selfupdate":  self.f_selfupdate}
