@@ -548,7 +548,12 @@ class _Shpy:
         conf = pywebdavserver.setupDummyConfig(**_dc)
         handler = pywebdavauthhandler
         handler._config = conf
-        pywebdavserver.runserver(port=8008, host=hostname, directory=os.getcwd(), verbose=False, noauth=True, user='', password='', handler=handler)
+        print "*** STARTING WEBDAV ***"
+        print "*** WebDAV url:
+        print "  http://%s:8008/" % (hostname)
+        print "*** NOTE: Using Windows?"
+        print "*** If so, recommend use 'BitKnex'"
+        pywebdavserver.runserver(port=8008, host=hostname, directory=os.getcwd(), verbose=True, noauth=True, user='', password='', handler=handler)
         return 0
 
     def f_untar(self, argv):
