@@ -674,6 +674,7 @@ class _Shpy:
                     "get URL [file] - Download file\n"         + \
                     "selfupdate - Update shpy\n"               + \
                     "pypi - Show available PyPI commands\n"    + \
+                    "webdav - Run a webdav server in cwd\n"    + \
                     "vars - List variables and values"
         self.bp = BashParser()
         try:
