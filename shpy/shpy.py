@@ -496,6 +496,61 @@ class _Shpy:
         finally:
             zipfp.close()
 
+    def f_webdav(self, argv):
+        # filename, location
+        import types, socket
+        try:
+            davcheck  = __import__('DAV')
+            davScheck = __import__('DAVServer')
+            if ((type(davcheck) == types.ModuleType) and (type(davScheck) == types.ModuleType)):
+                davready = True
+        except:
+            davready = False
+        olddir = os.path.abspath(os.getcwd())
+        if (not davready):
+            # Do a little work to pull down the modules to near shpy
+            import inspect
+            target = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+            os.chdir(target)
+            self.parse_cmd(self.bp.bash_parse("rm PyWebDAV*.tar.gz"))
+            self.parse_cmd(self.bp.bash_parse("pypi-install PyWebDAV"))
+            self.parse_cmd(self.bp.bash_parse("untar PyWebDAV*.tar.gz"))
+            self.parse_cmd(self.bp.bash_parse("rm PyWebDAV*.tar.gz"))
+            self.parse_cmd(self.bp.bash_parse("mv PyWebDAV*/DAV ."))
+            self.parse_cmd(self.bp.bash_parse("mv PyWebDAV*/DAVServer ."))
+            self.parse_cmd(self.bp.bash_parse("rm PyWebDAV*"))
+        from DAVServer.fileauth import DAVAuthHandler as pywebdavauthhandler
+        from DAVServer import server as pywebdavserver
+        os.chdir(olddir)
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("www.google.com",80))
+            hostname = s.getsockname()[0]
+            s.close()
+        except:
+            hostname = socket.gethostbyname(socket.gethostname())
+        _dc = { 'verbose' : False,
+         'directory' : os.getcwd(),
+         'port' : 8008,
+         'host' : hostname,
+         'noauth' : True,
+         'user' : '',
+         'password' : '',
+         'daemonize' : False,
+         'daemonaction' : 'start',
+         'counter' : 0,
+         'lockemulation' : True,
+         'mimecheck' : True,
+         'chunked_http_response': 1,
+         'http_request_use_iterator': 0,
+         'http_response_use_iterator': 0,
+         'baseurl' : ''}
+        conf = pywebdavserver.setupDummyConfig(**_dc)
+        handler = pywebdavauthhandler
+        handler._config = conf
+        pywebdavserver.runserver(port=8008, host=hostname, directory=os.getcwd(), verbose=False, noauth=True, user='', password='', handler=handler)
+        return 0
+
     def f_untar(self, argv):
         # filename, location
         if (not (2 <= len(argv) <= 3)):
@@ -591,6 +646,7 @@ class _Shpy:
                                "untar":  self.f_untar,
                                "unzip":  self.f_unzip,
                                "vars":   self.f_vars,
+                               "webdav": self.f_webdav,
                                "pypi":   self.f_pypi,
                                "pypi-search": self.f_pypi_search,
                                "pypi-vers":   self.f_pypi_vers,
