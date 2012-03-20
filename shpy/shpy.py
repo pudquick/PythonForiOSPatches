@@ -549,7 +549,7 @@ class _Shpy:
         handler = pywebdavauthhandler
         handler._config = conf
         print "*** STARTING WEBDAV ***"
-        print "*** WebDAV url:
+        print "*** WebDAV url:"
         print "  http://%s:8008/" % (hostname)
         print "*** NOTE: Using Windows?"
         print "*** If so, recommend use 'BitKnex'"
