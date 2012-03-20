@@ -359,23 +359,62 @@ class _Shpy:
         return 1
 
     def f_pypi(self, argv):
-        print "pypi commands:\n"                              + \
-              "--------------\n"                              + \
-              "pypi-search name - Package name search\n"      + \
-              "pypi-vers [-f|-v] name - Top/all/visible vers"
+        print "pypi commands:\n"                                 + \
+              "--------------\n"                                 + \
+              "pypi-search [-f] name - Top/all package search\n" + \
+              "pypi-vers [-f|-v] name - Top/all/visible vers\n"  + \
+              "pypi-install name [version] - Download src package"
         return 0
 
+    def f_pypi_install(self, argv):
+        if (not (len(argv) >= 2)):
+            print "* Usage: pypi-install name [version]"
+            return 0
+        pkg_name = argv[1]
+        pkg_ver  = (argv[2:] or [''])[0]
+        pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
+        hits = pypi.package_releases(pkg_name, True)
+        if (not hits):
+            print "* PyPI: No package named:", pkg_name
+            return 0
+        if (not pkg_ver):
+            pkg_ver = hits[0]
+        elif (not (pkg_ver in hits)):
+            print "* PyPI: Version '%s' not available for package '%s'" % (pkg_ver, pkg_name)
+            return 0
+        hits = pypi.release_urls(pkg_name, pkg_ver)
+        if (not hits):
+            print "* PyPI: No src for version '%s' of package '%s'" % (pkg_ver, pkg_name)
+            return 0
+        source = ([x for x in hits if x['packagetype'] == 'sdist'][:1] + [None])[0]
+        if (not source):
+            print "* PyPI: No src for version '%s' of package '%s'" % (pkg_ver, pkg_name)
+            return 0
+        return self.f_get([None, source['url'], source['filename']])
+        
     def f_pypi_search(self, argv):
         if (not (len(argv) >= 2)):
             print "* Usage: pypi-search name"
             return 0
+        no_limit = False
+        if ((len(argv) > 2) and (argv[1] in ["-f"])):
+            if (argv[1] == '-f'):
+                no_limit = True
+            argv = argv[1:]
         pkg_name = ' '.join(argv[1:])
         pypi = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
         hits = pypi.search({'name': pkg_name}, 'and')
         if (not hits):
             print "* PyPI: No matches found."
             return 0
-        print "* Found %s match%s:" % (len(hits), ((len(hits) > 1) and 'es') or '')
+        if ((not no_limit) and (len(hits) > 5)):
+            hits = hits[:5]
+        elif (not no_limit):
+            no_limit = True
+        if (not no_limit):
+            print "* Top 5 matches:"
+        else:
+            print "* Found %s match%s:" % (len(hits), ((len(hits) > 1) and 'es') or '')
         for p in sorted(hits, key=lambda pkg: pkg['_pypi_ordering'], reverse=True):
             print "  %s:" % (p['name'])
             print '   "%s"' % (p['summary'])
@@ -555,6 +594,7 @@ class _Shpy:
                                "pypi":   self.f_pypi,
                                "pypi-search": self.f_pypi_search,
                                "pypi-vers":   self.f_pypi_vers,
+                               "pypi-install": self.f_pypi_install,
                                "selfupdate":  self.f_selfupdate}
         self.hmsg = "Available commands:\n"                    + \
                     "-------------------\n"                    + \
@@ -572,6 +612,7 @@ class _Shpy:
                     "cp src [..] dest - Copy file(s)\n"        + \
                     "get URL [file] - Download file\n"         + \
                     "selfupdate - Update shpy\n"               + \
+                    "pypi - Show available PyPI commands\n"    + \
                     "vars - List variables and values"
         self.bp = BashParser()
         try:
