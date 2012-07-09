@@ -1,0 +1,1 @@
+exec(compile("from _rp import *\nimport os,urllib2\nd=os.getcwd()\nf=open(d+'/shpy.py','wb')\nf.write(urllib2.urlopen('http://pastebin.com/raw.php?i=BqANxymJ').read())\ng=open(d+'/bash_alike.py','wb')\ng.write(urllib2.urlopen('http://pastebin.com/raw.php?i=kJQ2m8nB').read())\nf.close()\ng.close()\nprint('Done. Use: from shpy import *')",filename='<string>',mode='exec'))
